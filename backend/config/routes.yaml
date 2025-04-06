@@ -1,0 +1,27 @@
+# Recipe Controllers
+#recipe:
+#    resource: '../src/Controller/Recipe/'
+#    type: attribute
+#    prefix: /api/recipes
+
+# Ingredient Controllers
+charging_session_request:
+    resource: '../src/ChargingSessionRequest/Application/Controller/'
+    type: attribute
+    prefix: /api
+
+internal_authorization:
+    resource: '../src/InternalAuthorization/Application/Controller/'
+    type: attribute
+    prefix: /api
+
+# User Controllers
+#user:
+#    resource: '../src/Controller/User/'
+#    type: attribute
+#    prefix: /api/user
+
+#api_login_check:
+#    path: /api/user/login
+#    methods: [POST]
+

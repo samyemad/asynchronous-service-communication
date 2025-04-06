@@ -1,0 +1,14 @@
+includes:
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+
+parameters:
+    level: 6
+    reportUnmatchedIgnoredErrors: false
+    paths:
+        - src
+    scanFiles:
+        - %rootDir%/../../../vendor/autoload.php
+    ignoreErrors:
+        -
+            identifier: missingType.iterableValue
+        - '#Property App\\Entity\\[A-Za-z0-9_\\\\]+::\$id is never written, only read.#'

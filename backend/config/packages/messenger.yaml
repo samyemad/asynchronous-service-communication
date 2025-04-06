@@ -1,0 +1,42 @@
+framework:
+    messenger:
+        # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
+        # failure_transport: failed
+
+        transports:
+          charging_session_request:
+            dsn: 'enqueue://default'
+            options:
+              topic:
+                name: 'charging_session_request'
+              queue:
+                name: 'charging_session_request'
+
+          authorization_decision_callback:
+            dsn: 'enqueue://default'
+            options:
+              topic:
+                name: 'authorization_decision_callback'
+              queue:
+                name: 'authorization_decision_callback'
+
+
+            # https://symfony.com/doc/current/messenger.html#transport-configuration
+            # async: '%env(MESSENGER_TRANSPORT_DSN)%'
+            # failed: 'doctrine://default?queue_name=failed'
+            # sync: 'sync://'
+
+        routing:
+          'App\ChargingSessionRequest\Application\Command\StartChargingSessionRequestCommand': charging_session_request
+          'App\ChargingSessionRequest\Application\Command\SendAuthorizationDecisionCallbackCommand': authorization_decision_callback
+#          'App\Message\MyMessage': kafka
+            # Route your messages to the transports
+            # 'App\Message\YourMessage': async
+
+# when@test:
+#    framework:
+#        messenger:
+#            transports:
+#                # replace with your transport name here (e.g., my_transport: 'in-memory://')
+#                # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
+#                async: 'in-memory://'

@@ -1,0 +1,4 @@
+enqueue:
+    default:
+        transport: '%env(resolve:KAFKA_DSN)%'
+        client: null
