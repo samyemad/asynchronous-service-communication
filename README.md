@@ -9,7 +9,7 @@ This project is a comprehensive system designed to manage recipes and ingredient
 The project is divided into several Docker containers, each serving a different role:
 
 - **Backend**: A Symfony-based API that handles all backend logic and interactions with the database.
-- **Nginx**: Serves as a reverse proxy, routing requests to the appropriate backend or frontend service.
+- **Nginx**: Serves as a reverse proxy, routing requests to the appropriate backend service.
 - **Database**: A MySQL database that stores all data.
 
 ## Setup
