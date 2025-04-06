@@ -10,7 +10,7 @@ The project is divided into several Docker containers, each serving a different 
 
 - **Backend**: A Symfony-based API that handles all backend logic and interactions with the database.
 - **Nginx**: Serves as a reverse proxy, routing requests to the appropriate backend or frontend service.
-- **Database**: A MySQL database that stores all data related to recipes, ingredients, and users.
+- **Database**: A MySQL database that stores all data.
 
 ## Setup
 
