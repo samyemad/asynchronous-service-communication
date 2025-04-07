@@ -25,7 +25,6 @@ A command or cron job will pick up this `StartChargingSessionRequestCommand` fro
 
 ### Process:
 - The `StartChargingSessionRequestCommand` is picked up and handled by the `StartChargingSessionRequestHandler` (Authorization Worker).
-- The handler will re-validate the request to ensure data integrity.
 - Make an asynchronous HTTP call to the `internal-authorization-service`.
 
 ### Internal-Authorization-Service Response:
@@ -67,13 +66,11 @@ A cron job or command picks up the `AuthorizationDecisionCallback` entry from th
 
 ### Success:
 - If the callback is successful:
-    - Logs the success confirmation in the `CallbackDeliveryOutbox` table.
-    - Publishes `CallbackDeliverySucceeded` event to Kafka for logging and further monitoring.
+    - Publishes `CallbackDeliverySucceeded` event to the `CallbackDeliveryOutbox` table.
 
 ### Failure:
 - If the callback fails (e.g., invalid URL, network issue):
     - Publishes `CallbackFailed` event to the `CallbackDeliveryOutbox` table.
-    - `CallbackFailed` events are then picked up by a retry mechanism (e.g., cron job or command) to retry sending the callback.
 
 ## 4️⃣ Event Publishing and Retry Mechanism
 
@@ -124,7 +121,7 @@ A cron job or command picks up the `AuthorizationDecisionCallback` entry from th
 1. Notification service listens for the `AuthorizationDecisionCallback` from Kafka.
 2. Attempts to deliver the decision to the callback URL.
 3. A successful callback is logged in the `CallbackDeliveryOutbox`, and `CallbackDeliverySucceeded` is published to Kafka.
-4. A failed callback is retried via the `CallbackDeliveryOutbox` and `CallbackFailed` event.
+4. A failed callback is stored in the `CallbackDeliveryOutbox` and `CallbackFailed` event.
 
 ### Event Publishing (Retry Mechanism):
 1. A cron job or command picks up both `CallbackFailed` and `CallbackDeliverySucceeded` events from the `CallbackDeliveryOutbox` and publishes them to Kafka.
@@ -132,8 +129,7 @@ A cron job or command picks up the `AuthorizationDecisionCallback` entry from th
 ## 📌 Failure Scenarios Handled:
 - **Invalid Input**: Returns `400 Bad Request` response.
 - **Internal-Authorization-Service Timeout**: Defaults to `status: "unknown"`.
-- **Callback Failure**: Retries the callback using the `CallbackDeliveryOutbox` table, which handles retries of failed callbacks.
-- **Callback Delivery Failure**: The `CallbackFailed` event will be published, and the retry mechanism will handle the re-sending process.
+- **Callback Delivery Failure**: The `CallbackFailed` event will be published, and the retry mechanism will handle the re-sending process or mark it as failed in `ChargingSessionRequest` context.
 
 ## 🗃️ Tables for Events
 
@@ -150,8 +146,8 @@ A cron job or command picks up the `AuthorizationDecisionCallback` entry from th
 
 ## Event Flow Summary:
 1. **API Controller**: Receives and validates the request, saves `StartChargingSessionRequestCommand` to the `ChargingSessionRequestOutbox` table, and responds to the client with an "accepted" message.
-2. **Authorization Worker**: Handles the command, makes a call to `internal-authorization-service`, and stores the result in the `AuthorizationDecisionCallbackOutbox` table.
-3. **Notification Context**: Listens for the `AuthorizationDecisionCallback` from Kafka, attempts to deliver the decision to the callback URL, and retries failed callbacks via `CallbackFailed` events.
+2. **Authorization Worker**: Handles the command, makes a call to `internal-authorization-service` context, and stores the result in the `AuthorizationDecisionCallbackOutbox` table.
+3. **Notification Context**: Listens for the `AuthorizationDecisionCallback` from Kafka, attempts to deliver the decision to the callback URL.
 
 ---
 

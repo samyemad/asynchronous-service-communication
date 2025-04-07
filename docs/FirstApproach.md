@@ -85,7 +85,7 @@ The outbox tables ensure reliable messaging and asynchronous communication. The 
 ### 5️⃣ Failure Handling and Retry Mechanism
 
 If a callback delivery fails, it is retried automatically using the retry mechanism. For each failed callback:
-- The system will retry the callback delivery using the stored commands in the `AuthorizationDecisionCallbackOutbox` table.
+- The system will retry the callback delivery using the stored commands in the `CallbackDeliveryOutbox` table.
 - Once a callback is successfully delivered, the corresponding command will be marked as processed.
 
 ### 6️⃣ Event Flow Summary
@@ -97,14 +97,14 @@ If a callback delivery fails, it is retried automatically using the retry mechan
 
 - **Authorization Worker Flow:**
   1. The `StartChargingSessionRequestCommand` is dispatched by the cron job to Kafka.
-  2. The `StartChargingSessionRequestHandler` processes the command, calls the internal-authorization-service, and stores the result in the `AuthorizationDecisionCallbackOutbox` table.
+  2. The `StartChargingSessionRequestHandler` processes the command, calls the internal-authorization-service, and stores the command `SendAuthorizationDecisionCallbackCommand` in the `AuthorizationDecisionCallbackOutbox` table.
   3. A cron job or command picks up the command from the `AuthorizationDecisionCallbackOutbox` table and publishes it to Kafka.
 
 - **Callback Dispatcher Flow:**
-  1. The cron job or command picks up the `SendAuthorizationDecisionCallbackCommand` from the `AuthorizationDecisionCallbackOutbox` table.
+  1. The `SendAuthorizationDecisionCallbackHandler` processes the command `SendAuthorizationDecisionCallbackCommand`.
   2. The authorization decision is sent to the provided callback URL.
-  3. If successful, no action is required, and the process is complete.
-  4. If the callback fails, the system retries sending the callback.
+  3. If successful, stores the `CallbackDeliverySucceeded` event in the CallbackDeliveryOutbox table..
+  4. If the callback fails, the system can retry sending the callback and stores the `CallbackDeliveryFailed` event in the CallbackDeliveryOutbox table.
 
 ## Tables Used
 
@@ -123,7 +123,6 @@ If a callback delivery fails, it is retried automatically using the retry mechan
 
 - **Invalid Input:** Responds with a 400 Bad Request if the input is invalid.
 - **Authorization Service Timeout:** Defaults to `status: unknown` if the authorization service times out.
-- **Callback Failure:** The retry mechanism ensures that the callback is retried until successful.
 - **Command Processing Failure:** If a command cannot be processed, it is logged for investigation, and the system continues processing the next commands.
 
 ## Conclusion

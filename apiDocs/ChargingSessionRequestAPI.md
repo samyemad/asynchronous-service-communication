@@ -7,15 +7,6 @@
 ### Description:
 This endpoint allows users to submit a charging session request. It accepts the details of the charging session, including station and driver information, and a callback URL to notify the user once the session is processed.
 
----
-
-## Request Headers:
-
-| Header          | Value                      | Description                                        |
-| --------------- | -------------------------- | -------------------------------------------------- |
-| `accept`        | `*/*`                      | Accept all response formats.                       |
-| `accept-language` | `en-US,en;q=0.9`           | Language preference for the response.              |
-| `content-type`  | `application/json; charset=UTF-8` | Specifies the encoding of the request body.        |
 
 ---
 

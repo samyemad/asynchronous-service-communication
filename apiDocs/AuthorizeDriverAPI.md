@@ -4,8 +4,6 @@
 
 ### Request Body
 
-## Request Body:
-
 The request body should be sent as a JSON object with the following fields:
 
 | Key            | Type    | Description                                                                 |
