@@ -86,7 +86,6 @@ The outbox tables ensure reliable messaging and asynchronous communication. The 
 
 If a callback delivery fails, it is retried automatically using the retry mechanism. For each failed callback:
 - The system will retry the callback delivery using the stored commands in the `CallbackDeliveryOutbox` table.
-- Once a callback is successfully delivered, the corresponding command will be marked as processed.
 
 ### 6️⃣ Event Flow Summary
 

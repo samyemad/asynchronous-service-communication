@@ -1,5 +1,4 @@
 <?php
-// src/Application/Result/AuthorizationResult.php
 namespace App\InternalAuthorization\Application\Result;
 
 class AuthorizationResult

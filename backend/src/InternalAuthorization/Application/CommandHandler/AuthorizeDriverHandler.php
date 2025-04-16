@@ -49,7 +49,7 @@ class AuthorizeDriverHandler
         );
         $decision->decide($validUntil);
         $token = DriverTokenStatus::UNKNOWN;
-        if ($decision->getStatus() == 'allowed') {
+        if ($decision->getStatus() == AuthorizationStatus::ALLOWED) {
             $token = $this->tokenGenerator->generate();
         }
         $this->authorizationDecisionRepository->save($decision);
